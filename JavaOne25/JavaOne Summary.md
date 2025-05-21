@@ -17,6 +17,7 @@ Deeper into Java / Real world java
 ✅ https://www.youtube.com/watch?v=5SU3hd0NVXE&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=13&pp=iAQB
 ✅ https://www.youtube.com/watch?v=v_5SKpfkI2U&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=17&pp=iAQB
 ✅ https://www.youtube.com/watch?v=XpunFFS-n8I&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=10&pp=iAQB
+✅ https://www.youtube.com/watch?v=6yuDqkkYTGU&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=15&pp=iAQB
 
 Java for AI
 https://www.youtube.com/watch?v=-XnyJad88Ss&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=7&pp=iAQB
@@ -31,4 +32,3 @@ https://www.youtube.com/watch?v=CLgWfNnsDiM&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwyt
 
 ?
 https://www.youtube.com/watch?v=W8k9ZCrsphc&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=14&pp=iAQB0gcJCYsJAYcqIYzv
-https://www.youtube.com/watch?v=6yuDqkkYTGU&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=15&pp=iAQB
