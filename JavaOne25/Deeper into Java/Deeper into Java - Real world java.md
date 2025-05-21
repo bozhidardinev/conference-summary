@@ -35,7 +35,7 @@ Lesson: API design can be difficult, and overloading (like having remove(int ind
 The talk introduces **Stream Gatherers**, a new concept added to the Java Streams API to address limitations with existing intermediate operations and the `Collector` interface. The goal is to enable developers to create custom, flexible intermediate stream operations.
 
 Stream Anatomy:
-![[JavaOne25/Deeper into Java/screenshots/1.png]]
+![Image](screenshots/1.png)
 
 
 **Background: Java Stream Pipelines**
@@ -122,11 +122,11 @@ The **Netflix streaming backend** is characterized by extremely **high Requests 
 
 The **traditional enterprise apps** (like those for movie production) are different. They are generally **low RPS** with fewer concurrent users. They can typically operate in a **single region**. Data often fits well into **relational databases**, although they aren't always used. Crucially, for these apps, **failure is often not an option**; data must be saved reliably, meaning the retry-on-failure mechanism used in streaming is not as applicable.
 
-![[JavaOne25/Deeper into Java/screenshots/2.png]]
+![Image](screenshots/2.png)
 
 Despite these differences, both types of applications utilize a similar **GraphQL-based architecture**. Requests from devices or UIs first hit a **GraphQL API Gateway**. This gateway handles **federated GraphQL queries**, fanning out to various backend services, which Netflix calls **Domain Graph Services (DGS)**. These DGS services are primarily built using **Spring Boot** and the **DGS framework**, and are all Java. For **server-to-server communication**, Netflix often uses **gRPC**. gRPC is preferred for this purpose because it's a fast, binary protocol and aligns with a method-call mental model. For UI-to-backend communication, **GraphQL** is favored due to its flexible schema, schema-based collaboration between teams, and thinking-in-data model. The talk states that **REST is generally not used** for new development at Netflix due to a lack of schema, lack of flexibility, and often sending too much data.
 
-![[JavaOne25/Deeper into Java/screenshots/3.png]]
+![Image](screenshots/3.png)
 
 
 Regarding **how Netflix uses Java**, the talk details their journey and technologies:
@@ -153,7 +153,7 @@ In summary, Netflix heavily relies on Java for its backend services, utilizing a
 
 [# Preparing for the Java 21 Certification (or Learning New Features) - Jeanne Boyarsky (Java Champion & author)](https://www.youtube.com/watch?v=J1YH_GsS-e0&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=7&ab_channel=Java)
 
-![[JavaOne25/Deeper into Java/screenshots/4.png]]
+![Image](screenshots/4.png)
 
 The presentation covers **four main blocks** of content:
 
@@ -162,30 +162,30 @@ The presentation covers **four main blocks** of content:
     - **Text Blocks** were introduced to make multi-line strings with quotes and special characters easier to read and write, solving problems like missing quotes and excessive backslashes seen in traditional strings.
     - They begin and end with triple quotes `"""`. The opening triple quotes must be on their own line.
     - Text blocks are simply **strings**; any method or usage applicable to a string works with a text block.
-    - ![[JavaOne25/Deeper into Java/screenshots/5.png]]
+    - ![Image](screenshots/5.png)
     - White space is handled specifically: **incidental white space** (indentation for code readability) is ignored, while **essential white space** (to the right of the indentation line) is preserved.
     - New escape sequences like `\s` for a space and `\` to continue a line without a newline are available.
     - Triple quotes within a text block must be escaped, either by escaping all three `\"""` or just the first one `\"""`.
     - The talk also briefly mentions `indexOf` overloads and advises considering alternatives if using `indexOf` frequently.
-    - ![[JavaOne25/Deeper into Java/screenshots/6.png]]
+    - ![Image](screenshots/6.png)
     - **Sequence Collections** were added in Java 21 to provide deterministic order for collections that previously didn't guarantee it, such as `HashSet`.
-    - ![[JavaOne25/Deeper into Java/screenshots/7.png]]
+    - ![Image](screenshots/7.png)
     - They introduce interfaces like `SequenceCollection`, `SequenceSet`, and `SequenceMap`.
     - Sequence collections offer new methods like `getFirst()`, `getLast()`, and `reversed()`.
     - ![[JavaOne25/Deeper into Java/screenshots/8.png]]
     - Classes like `LinkedHashSet` and `TreeSet` implement sequence collection interfaces, while `HashSet` does not because its order is not guaranteed. Traditional methods like `iterator().next()` on non-sequenced collections still do not guarantee order.
-    - ![[JavaOne25/Deeper into Java/screenshots/9.png]]
+    - ![Image](screenshots/9.png)
 2. **Records and Sealed Classes**:
     
     - **Records** dramatically simplify the creation of immutable data carrier classes (like POJOs).
     - They automatically provide: a `final` class, `private final` instance variables, accessors (methods with the same name as the fields, e.g., `title()`), a constructor, and correct `equals()` and `hashCode()` implementations based on all component values.
-    - ![[10.png]]
+    - ![Image](screenshots/10.png)
     - While records handle much of the boilerplate, care is still needed for mutable components (like `List`) to ensure true immutability, often requiring defensive copies in a constructor.
     - Records can use **compact constructors**, which have no parameter list and are used to validate or modify parameter values before they are assigned to the record's components.
-    - ![[11.png]]
+    - ![Image](screenshots/11.png)
     - Records can implement interfaces.
     - **Sealed Classes** allow a class or interface to explicitly define a restricted set of permitted subclasses or implementing classes.
-    - ![[12.png]]
+    - ![Image](screenshots/12.png)
     - Permitted types can be declared as `final` (no further subclassing), `non-sealed` (subclassing is allowed), or `sealed` (the rule recursively applies). Records and enums are implicitly final.
     - Sealed classes work with `instanceof` checks.
     - A minor related feature mentioned is that `static` members (including implicit ones in interfaces/enums) are now legal inside methods and classes.
@@ -197,14 +197,14 @@ The presentation covers **four main blocks** of content:
     - Pattern variables are not final and can be reassigned, though this is confusing and not recommended.
     - **Pattern Matching for `switch`** extends this concept to switch statements and expressions.
     - Modern `switch` uses the `->` syntax for cases, avoiding the need for `break` and preventing fall-through errors. Multiple values can be combined in a single case with a comma.
-    - ![[13.png]]
+    - ![Image](screenshots/13.png)
     - **Switch expressions** return a value and must be exhaustive, covering all possible input values (e.g., requiring a `default` or handling all enum constants).
-    - ![[14.png]]
+    - ![Image](screenshots/14.png)
     - Pattern matching in `switch` allows using type patterns (`case Integer i -> ...`) and guards (`case Integer i when i > 21 -> ...`). The order of cases with patterns matters.
     - Pattern variables declared in switch cases are scoped only to that specific case.
-    - ![[15.png]]
+    - ![Image](screenshots/15.png)
     - **Record Patterns** allow decomposing the components of a record directly within `instanceof` checks or `switch` cases, simplifying access to nested data. Example: `if (card instanceof Card(Suit suit, Rank rank))` makes `suit` and `rank` available. Nesting of record patterns is supported.
-    - ![[16.png]]
+    - ![Image](screenshots/16.png)
     - Notes restrictions like the inability to use `Boolean`, `float`, `double`, or `long` directly in switch patterns (as of Java 21). Demonstrates using `instanceof` pattern matching to write a concise and correct `equals` method.
 4. **Virtual Threads and Scope Values**:
     
@@ -213,5 +213,5 @@ The presentation covers **four main blocks** of content:
     - A small number of platform threads can manage many virtual threads by "mounting" them when they are running and "unmounting" them when they block, allowing the platform thread to run other virtual threads.
     - Virtual threads can be created using `Executors.newVirtualThreadPerTaskExecutor()` or `Thread.ofVirtual()`. Using the `new Thread()` constructor _always_ creates a platform thread.
     - Virtual threads are often short-lived and disposable due to their low overhead, reducing the need for thread pooling.
-    - ![[17.png]]
+    - ![Image](screenshots/17.png)
     - Executors gained `AutoCloseable` support, simplifying shutdown.
