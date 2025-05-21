@@ -215,3 +215,64 @@ The presentation covers **four main blocks** of content:
     - Virtual threads are often short-lived and disposable due to their low overhead, reducing the need for thread pooling.
     - ![Image](screenshots/17.png)
     - Executors gained `AutoCloseable` support, simplifying shutdown.
+
+
+[Sequenced Collections (Available in Java21) - Stuart Marks - Consulting Member of Technical Staff (Java Platform Group - Oracle)](https://www.youtube.com/watch?v=J1YH_GsS-e0&list=PLX8CzqL3ArzVV1xRJkRbcM2tOgVwytJAi&index=7&ab_channel=Java)
+
+The talk, presented by Stuart Marks, introduces **Sequenced Collections**, a new set of APIs added to the JDK 21 Collections Framework.
+
+The speaker views the collections framework not just as implementations of data structures (like hash tables, arrays, linked lists) but also as a **system of abstractions over containers of elements**. These abstractions are defined by abstract characteristics, such as whether a container maintains elements in a specific order, requires unique elements, maintains associations, or keeps elements in sorted order. These characteristics are embodied in interfaces like `List`, `Set`, `Map`, `NavigableMap`, and `NavigableSet.
+
+#### Choosing the right Collection
+![Image](screenshots/18.png)
+
+The talk highlights a common difficulty in navigating the duality between implementations and abstractions when choosing the right collection. The speaker focuses on two key abstract characteristics for collections:
+
+1. **Does it allow duplicate elements or require unique elements?** Duplicates are defined based on `Object.equals()`. A collection allows duplicates if it can contain two or more elements that are equal. A collection requires unique elements if no two elements within it are equal.
+2. **Are the elements ordered or unordered?** This refers to **encounter order**: does the collection have a defined, predictable order in which elements are encountered during iteration, or not?. Collections like `HashSet` do not have a defined encounter order; the iteration order might change between runs or upon modification. Collections like `List` have a defined encounter order based on insertion position.
+
+![Image](screenshots/19.png)
+
+Prior to JDK 21, there were **missing interfaces** in the collections hierarchy based on these characteristics:
+
+- An ordered collection that permits duplicates was represented by interfaces like `List` and `Deque`, but there was **no common supertype interface** (other than `Collection`) that embodied their shared characteristic of being ordered and allowing duplicates.
+- An ordered collection that requires unique elements was represented by implementations like `LinkedHashSet`, which maintains insertion order, but **no corresponding interface** existed. `SortedSet` and `NavigableSet` exist but require a sort order, not just insertion order.
+
+To address these missing interfaces, **JDK 21 integrated JEP 431, adding three new interfaces** to the collections hierarchy:
+
+- **`SequencedCollection<E>`**: Extends `Collection<E>`. Represents a collection that has a **defined encounter order**.
+- **`SequencedSet<E>`**: Extends `SequencedCollection<E>`. Represents a sequenced collection that also **requires unique elements**. This interface fits nicely above `LinkedHashSet` and `SortedSet`/`NavigableSet`.
+- **`SequencedMap<K, V>`**: Represents a map whose entries are in sequence. This fits above `SortedMap`, `NavigableMap`, and `LinkedHashMap`.
+
+![Image](screenshots/20.png)
+
+These new interfaces introduce a set of **additional operations** that are meaningful only on collections with a defined encounter order:
+
+- **Operations at either end:** `addFirst`, `addLast`, `getFirst`, `getLast`, `removeFirst`, `removeLast`. These were promoted from the `Deque` interface and are now available on any collection that implements `SequencedCollection` (including `List`).
+- **`reversed()` method:** Returns a **reverse-ordered _view_** of the underlying collection's elements. This is not a copy but a dynamic view, meaning modifications to the underlying collection are reflected in the reversed view, and vice versa (though write-through is not supported by all implementations). The `reversed()` method was inspired by `NavigableSet`'s `descendingSet()` method. `SequencedSet.reversed()` provides a co-variant return type of `SequencedSet`. `SequencedMap` has corresponding methods like `putFirst`, `putLast`, `firstEntry`, `lastEntry`, `pollFirstEntry`, `pollLastEntry`, and `reversed()`.
+
+These new methods significantly **simplify common developer tasks** compared to prior JDK versions:
+
+- **Removing the first or last element** from a `List`, `Deque`, `LinkedHashSet`, or `NavigableSet` now simply involves calling `removeFirst()` or `removeLast()` on the sequenced collection, eliminating manual index calculations or iterator manipulation.
+- **Iterating in reverse** is now straightforward across sequenced collections. Instead of using complex `ListIterator` loops, `Deque`'s `descendingIterator`, or copying elements, you can simply call `collection.reversed().forEach(...)` or get an iterator from the reversed view.
+- **Streaming in reverse order** is also simplified. For any sequenced collection, you can now obtain a stream in reverse order by calling `collection.reversed().stream()`, avoiding complex custom iterators or `Stream.iterate()` approaches.
+
+![Image](screenshots/21.png)
+
+![Image](screenshots/22.png)
+![Image](screenshots/23.png)
+![Image](screenshots/24.png)
+![Image](screenshots/25.png)
+![Image](screenshots/26.png)
+The new sequenced interfaces are also **useful in APIs**, allowing developers to specify that a parameter or return type must be an ordered collection (`SequencedCollection`) or an ordered set (`SequencedSet`) without forcing the use of specific implementations like `ArrayList` or `LinkedHashSet`.
+
+The new interfaces also provide **increased flexibility for existing implementations** like `LinkedHashSet` and `LinkedHashMap` (ordered and unique elements). For example, `addFirst` and `addLast` on `LinkedHashSet` allow you to reorder existing elements by moving them to the front or back, which was not previously possible.
+
+Some specific design points:
+
+- `getFirst`, `getLast`, `removeFirst`, `removeLast` on empty sequenced collections throw `NoSuchElementException`, consistent with `List` and `Set`. `firstEntry`, `lastEntry`, `pollFirstEntry`, `pollLastEntry` on empty sequenced maps return `null`, consistent with `NavigableMap`.
+- `Queue` was not included in the sequenced collections hierarchy because its primary use case is inter-thread communication, and some implementations like `PriorityQueue` don't maintain a discernible encounter order except when removing elements.
+- Co-variant overrides ensure that calling `reversed()` on a specific type (like `List` or `Deque`) returns a view of the same specific type, preserving type-specific operations. A specific case is `LinkedList`, which implements both `List` and `Deque`, requiring a special override for `reversed()`.
+- `NavigableSet` throws `UnsupportedOperationException` for `addFirst` and `addLast` because these operations conflict with its sorting requirement.
+
+The addition of these interfaces and methods is considered a **significant evolution** of the collections framework. The speaker also speculates on future possibilities, such as adding factory methods like `SequencedSet.of()` and `SequencedMap.of()` to create unmodifiable, ordered collections.
